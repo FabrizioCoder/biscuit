@@ -14,7 +14,6 @@ import {
 	GatewayCloseEventCodes,
 } from '@biscuitland/api-types';
 
-import WebSocket from 'ws';
 import { inflateSync } from 'node:zlib';
 
 export const DEFAULT_HEARTBEAT_INTERVAL = 45000;
@@ -30,6 +29,12 @@ export type PickOptions = Pick<
 
 const decoder = new TextDecoder();
 
+if (!globalThis.WebSocket) {
+    import('ws').then((mod) => {
+        // @ts-expect-error: BUN
+        globalThis.WebSocket = mod
+    });
+}
 
 export interface ShardOptions {
 	/** Id of the shard which should be created. */
